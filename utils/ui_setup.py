@@ -1,8 +1,8 @@
-import cv2
 import numpy as np
+import cv2
 
 def draw_toolbar(frame):
-    """Draws the toolbar and quit text on the camera feed."""
+    """Draws the toolbar only (you'll use it fully in week 3)."""
     cv2.rectangle(frame, (40, 1), (140, 65), (0, 0, 0), 2)
     cv2.rectangle(frame, (160, 1), (255, 65), (255, 0, 0), 2)
     cv2.rectangle(frame, (275, 1), (370, 65), (0, 255, 0), 2)
@@ -15,13 +15,10 @@ def draw_toolbar(frame):
     cv2.putText(frame, "RED", (420, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
     cv2.putText(frame, "YELLOW", (520, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
 
-    cv2.putText(frame, "Press any key to quit", (10, frame.shape[0] - 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (50, 50, 50), 2)
-
 
 def create_empty_canvas(width=960, height=720):
-    """Creates an empty white canvas."""
+    """Returns a blank white canvas."""
     canvas = np.ones((height, width, 3), dtype=np.uint8) * 255
-    cv2.putText(canvas, "Press any key to quit", (10, height - 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (50, 50, 50), 2)
+    cv2.putText(canvas, "Drawing Canvas", (10, height - 15),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (80, 80, 80), 2)
     return canvas

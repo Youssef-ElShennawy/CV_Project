@@ -4,9 +4,12 @@ import cv2
 
 def main():
     canvas = create_empty_canvas()
+
+    # Show the initial canvas window
     cv2.imshow("AI Virtual Painter - Canvas", canvas)
 
-    show_camera_feed()
+    # Start the camera feed (hand tracking + drawing)
+    show_camera_feed(canvas)
 
     cv2.destroyAllWindows()
 
