@@ -55,63 +55,56 @@ def show_camera_feed(canvas, width=960, height=720):
     if not cap.isOpened():
         return
 
-    canvas_window = "AI Virtual Painter - Canvas"
-
     while True:
         ret, frame = cap.read()
-        if not ret:
-            break
+        if not ret: break
 
         frame = cv2.flip(frame, 1)
         frame = cv2.resize(frame, (width, height))
-
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = hands.process(rgb)
 
         if results.multi_hand_landmarks:
             for handLms in results.multi_hand_landmarks:
-
                 h, w, c = frame.shape
-                lm_list = []
-                for lm in handLms.landmark:
-                    cx, cy = int(lm.x * w), int(lm.y * h)
-                    lm_list.append((cx, cy))
-
+                lm_list = [(int(lm.x * w), int(lm.y * h)) for lm in handLms.landmark]
                 index_finger = lm_list[8]
 
-                # Draw green circle on index finger
                 cv2.circle(frame, index_finger, 10, (0, 255, 0), -1)
 
-                # --- Toolbar interaction ---
                 tool = detect_toolbar_touch(index_finger[0], index_finger[1])
                 if tool == "CLEAR":
                     canvas[:] = 255
                     prev_point = None
 
-                # Prevent drawing on toolbar area (top 70px)
                 if index_finger[1] < 70:
                     prev_point = None
                 else:
-                    # Draw lines on canvas
                     if prev_point is None:
                         prev_point = index_finger
                     else:
+                        # Draw on the canvas
                         cv2.line(canvas, prev_point, index_finger, current_color, 4)
                         prev_point = index_finger
-
-                # Draw hand skeleton
+                
                 mp_draw.draw_landmarks(frame, handLms, mp_hands.HAND_CONNECTIONS)
-
         else:
             prev_point = None
 
-        # Draw toolbar on camera window
+        
+        imgGray = cv2.cvtColor(canvas, cv2.COLOR_BGR2GRAY)
+        
+
+        _, imgInv = cv2.threshold(imgGray, 245, 255, cv2.THRESH_BINARY_INV)
+        
+
+        frame[imgInv > 0] = canvas[imgInv > 0]
+        # -----------------------------------------------
+
         draw_toolbar(frame)
-
         cv2.imshow("AI Virtual Painter - Camera", frame)
-        cv2.imshow(canvas_window, canvas)
+        cv2.imshow("AI Virtual Painter - Canvas", canvas)
 
-        # Press any key to quit
         if cv2.waitKey(1) != -1:
             break
 
